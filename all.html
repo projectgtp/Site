@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>All-in-One Website Portal</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f4f4;
+      color: #333;
+    }
+    header {
+      background: #2196F3;
+      color: white;
+      padding: 20px 0;
+      text-align: center;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    header h1 {
+      font-size: 2em;
+      margin-bottom: 5px;
+    }
+    header p {
+      font-size: 1em;
+      font-weight: 300;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 0 20px;
+    }
+    .filter {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .filter input[type="text"] {
+      padding: 12px 20px;
+      width: 80%;
+      max-width: 300px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 16px;
+      margin: 10px;
+    }
+    .filter button {
+      padding: 12px 20px;
+      margin: 10px 5px;
+      border: none;
+      background: #555;
+      color: white;
+      cursor: pointer;
+      border-radius: 5px;
+      font-size: 16px;
+      transition: background 0.3s ease;
+    }
+    .filter button:hover {
+      background: #2196F3;
+    }
+    .links-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
+    .link-item {
+      background: white;
+      border-radius: 8px;
+      padding: 15px;
+      width: 250px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+    }
+    .link-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    }
+    .link-item a {
+      text-decoration: none;
+      color: #333;
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .category-social { border-left: 5px solid #2196F3; }
+    .category-news { border-left: 5px solid #4CAF50; }
+    .category-ent { border-left: 5px solid #FF9800; }
+    .category-adult { border-left: 5px solid #E91E63; }
+
+    /* Preview tooltip */
+    .preview-tooltip {
+      display: none;
+      position: absolute;
+      top: -50px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 200px;
+      height: 150px;
+      background-color: white;
+      border: 1px solid #ddd;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .preview-tooltip iframe {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Mobile Responsiveness */
+    @media (max-width: 768px) {
+      .link-item {
+        width: 200px;
+        padding: 10px;
+      }
+      header h1 {
+        font-size: 1.6em;
+      }
+      .filter input[type="text"] {
+        width: 70%;
+      }
+      .filter button {
+        font-size: 14px;
+        padding: 10px 15px;
+      }
+    }
+/* ===== Confirmation Popup ===== */
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+.confirm-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+.confirm-box {
+  background: #fff;
+  padding: 20px 24px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  max-width: 360px;
+  width: calc(100% - 40px);
+  animation: popupFadeIn 0.3s ease;
+}
+.confirm-box h3 {
+  font-size: 18px;
+  margin: 0 0 8px;
+  color: #222;
+}
+.confirm-box p {
+  font-size: 14px;
+  margin: 0 0 16px;
+  color: #555;
+  word-wrap: break-word;
+  word-break: break-all;
+}
+.confirm-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+.confirm-buttons button {
+  padding: 8px 16px;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: transform 0.08s ease, background 0.2s ease;
+}
+.confirm-buttons button:active {
+  transform: scale(0.96);
+}
+.confirm-buttons .yes {
+  background: #2196F3;
+  color: #fff;
+  box-shadow: 0 0 8px rgba(33, 150, 243, 0.4);
+}
+.confirm-buttons .yes:hover {
+  background: #1976D2;
+  box-shadow: 0 0 12px rgba(33, 150, 243, 0.6);
+}
+.confirm-buttons .no {
+  background: #e0e0e0;
+  color: #111;
+}
+.confirm-buttons .no:hover {
+  background: #cfcfcf;
+}
+
+/* Popup animation */
+@keyframes popupFadeIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+/* ===== Fullscreen Loading Spinner ===== */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.loading-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Spinner animation */
+.spinner {
+  width: 60px;
+  height: 60px;
+  border: 6px solid #fff;
+  border-top-color: #2196F3;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  box-shadow: 0 0 20px rgba(33,150,243,0.6);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+/* ===== Loading Bar ===== */
+.loading-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 4px;
+  width: 0%;
+  background: linear-gradient(90deg, #2196F3, #00E5FF, #00BCD4);
+  z-index: 99999;
+  transition: width 0.4s ease;
+  box-shadow: 0 0 10px rgba(33, 150, 243, 0.5);
+}
+
+/* Optional glow pulse effect */
+@keyframes glowPulse {
+  0% {
+    box-shadow: 0 0 10px rgba(33, 150, 243, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(33, 150, 243, 0.9);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(33, 150, 243, 0.5);
+  }
+}
+.loading-bar.active {
+  animation: glowPulse 1.2s infinite ease-in-out;
+}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>One-Above Website</h1>
+    <p>Explore unlimited websites in one place. (Categories include Social, News, Entertainment, adults and more.)</p>
+  </header>
+
+  <div class="container">
+    <div class="filter">
+      <input type="text" id="searchInput" onkeyup="searchLinks()" placeholder="Search websites...">
+     <button onclick="openDuckDuckGoSearch()">Go</button>
+     <button onclick="filterLinks('all')">All</button>
+      <button onclick="filterLinks('social')">Social</button>
+      <button onclick="filterLinks('news')">News</button>
+      <button onclick="filterLinks('ent')">Entertainment</button>
+      <button onclick="filterLinks('adult')">Adult</button>
+      <button onclick="openRandomWebApp()">Random WebApp</button>
+    </div>
+    <div class="links-grid" id="linksGrid">
+    <!-- 🌐 SOCIAL WEBSITES -->
+<div class="link-item category-social" data-category="social"><a href="https://www.facebook.com" target="_blank">Facebook</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.twitter.com" target="_blank">Twitter / X</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.instagram.com" target="_blank">Instagram</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.snapchat.com" target="_blank">Snapchat</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.tiktok.com" target="_blank">TikTok</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.linkedin.com" target="_blank">LinkedIn</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.reddit.com" target="_blank">Reddit</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.pinterest.com" target="_blank">Pinterest</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.tumblr.com" target="_blank">Tumblr</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://discord.com" target="_blank">Discord</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.telegram.org" target="_blank">Telegram</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.threads.net" target="_blank">Threads</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.quora.com" target="_blank">Quora</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.wechat.com" target="_blank">WeChat</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.line.me" target="_blank">LINE</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://vk.com" target="_blank">VK</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.mastodon.social" target="_blank">Mastodon</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.blueskyweb.xyz" target="_blank">Bluesky</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.flickr.com" target="_blank">Flickr</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.meetup.com" target="_blank">Meetup</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.okcupid.com" target="_blank">OkCupid</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.match.com" target="_blank">Match</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.badoo.com" target="_blank">Badoo</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.hinge.co" target="_blank">Hinge</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.bumble.com" target="_blank">Bumble</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.tinder.com" target="_blank">Tinder</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.onlyfans.com" target="_blank">OnlyFans</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.patreon.com" target="_blank">Patreon</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.substack.com" target="_blank">Substack</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.medium.com" target="_blank">Medium</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.deviantart.com" target="_blank">DeviantArt</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.behance.net" target="_blank">Behance</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://dribbble.com" target="_blank">Dribbble</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://soundcloud.com" target="_blank">SoundCloud</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://mixcloud.com" target="_blank">Mixcloud</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://bandcamp.com" target="_blank">Bandcamp</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://clubhouse.com" target="_blank">Clubhouse</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.9gag.com" target="_blank">9GAG</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.producthunt.com" target="_blank">Product Hunt</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.goodreads.com" target="_blank">Goodreads</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.gaiaonline.com" target="_blank">Gaia Online</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.minds.com" target="_blank">Minds</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.gab.com" target="_blank">Gab</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://truthsocial.com" target="_blank">Truth Social</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://gettr.com" target="_blank">Gettr</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://parler.com" target="_blank">Parler</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.wattpad.com" target="_blank">Wattpad</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.depop.com" target="_blank">Depop</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://nextdoor.com" target="_blank">Nextdoor</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.hootsuite.com" target="_blank">Hootsuite</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://buffer.com" target="_blank">Buffer</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.socialblade.com" target="_blank">Social Blade</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.linktr.ee" target="_blank">Linktree</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://beacons.ai" target="_blank">Beacons</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://campsite.bio" target="_blank">Campsite</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.revue.co" target="_blank">Revue</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.kick.com" target="_blank">Kick</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.peertube.org" target="_blank">PeerTube</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.streamable.com" target="_blank">Streamable</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.bitchute.com" target="_blank">BitChute</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://odysee.com" target="_blank">Odysee</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://rumble.com" target="_blank">Rumble</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.viadeo.com" target="_blank">Viadeo</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.xing.com" target="_blank">Xing</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.myspace.com" target="_blank">MySpace</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.plurk.com" target="_blank">Plurk</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://ello.co" target="_blank">Ello</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://mewe.com" target="_blank">MeWe</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://aminoapps.com" target="_blank">Amino</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.gaana.com" target="_blank">Gaana Social</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://mastodon.social" target="_blank">Mastodon</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.cohost.org" target="_blank">Cohost</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.micro.blog" target="_blank">Micro.blog</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://diasporafoundation.org" target="_blank">Diaspora*</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://scuttlebutt.nz" target="_blank">Scuttlebutt</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://wt.social" target="_blank">WT Social</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://ello.co" target="_blank">Ello</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://cohost.org" target="_blank">Cohost</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.slack.com" target="_blank">Slack (Communities)</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.discord.gg" target="_blank">Discord Communities</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://matrix.org" target="_blank">Matrix Chat</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://signal.org" target="_blank">Signal Messenger</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://element.io" target="_blank">Element Chat</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://telegram.me" target="_blank">Telegram Channels</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://groupme.com" target="_blank">GroupMe</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.viber.com" target="_blank">Viber</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.kakao.com" target="_blank">KakaoTalk</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.weibo.com" target="_blank">Weibo</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.qq.com" target="_blank">QQ</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.douyin.com" target="_blank">Douyin</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.baomail.com" target="_blank">BaoMail Social</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://beehive.com" target="_blank">Beehive Network</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://plurk.com" target="_blank">Plurk</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.taringa.net" target="_blank">Taringa!</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.twoo.com" target="_blank">Twoo</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.couchsurfing.com" target="_blank">Couchsurfing</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.interpals.net" target="_blank">InterPals</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://tagged.com" target="_blank">Tagged</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://republic.co" target="_blank">Republic Community</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.roposo.com" target="_blank">Roposo</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.sharechat.com" target="_blank">ShareChat</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.mojapp.in" target="_blank">Moj App</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.chingari.io" target="_blank">Chingari</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.kuaishou.com" target="_blank">Kuaishou</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.triller.co" target="_blank">Triller</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.likee.video" target="_blank">Likee</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.peach.cool" target="_blank">Peach</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.vero.co" target="_blank">Vero</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.minds.com" target="_blank">Minds</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://steemit.com" target="_blank">Steemit</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://hive.blog" target="_blank">Hive Blog</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.pixelfed.social" target="_blank">Pixelfed</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://lensa.app" target="_blank">Lensa Community</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.caffeine.tv" target="_blank">Caffeine Live</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.yubo.live" target="_blank">Yubo</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://houseparty.com" target="_blank">Houseparty (archived)</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://bsky.app" target="_blank">Bluesky App</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://nitter.net" target="_blank">Nitter (Alt Twitter)</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://post.news" target="_blank">Post News</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://spoutible.com" target="_blank">Spoutible</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://threads.net" target="_blank">Threads (Alt)</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.truthsocial.com" target="_blank">Truth Social</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://locals.com" target="_blank">Locals</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://bitclout.com" target="_blank">BitClout</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.fanbase.app" target="_blank">Fanbase</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://tribel.com" target="_blank">Tribel</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.wireclub.com" target="_blank">Wireclub</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.secondlife.com" target="_blank">Second Life</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.imvu.com" target="_blank">IMVU</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.roblox.com" target="_blank">Roblox Social</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.epicgames.com" target="_blank">Epic Friends</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.playstation.com" target="_blank">PlayStation Network</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.xbox.com" target="_blank">Xbox Live</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://steamcommunity.com" target="_blank">Steam Community</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://store.epicgames.com/en-US/" target="_blank">Epic Community</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.deviantart.com" target="_blank">DeviantArt</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://fandom.com" target="_blank">Fandom</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://fanfiction.net" target="_blank">FanFiction</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://archiveofourown.org" target="_blank">AO3 Community</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://inkbunny.net" target="_blank">Inkbunny</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://depop.com" target="_blank">Depop Social</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.last.fm" target="_blank">Last.fm</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://myanimelist.net" target="_blank">MyAnimeList</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://anilist.co" target="_blank">AniList</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://letterboxd.com" target="_blank">Letterboxd</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://trakt.tv" target="_blank">Trakt TV</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.giantbomb.com" target="_blank">Giant Bomb Community</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.metacritic.com" target="_blank">Metacritic Users</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.gamefaqs.gamespot.com" target="_blank">GameFAQs</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://www.reverbnation.com" target="_blank">ReverbNation</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://mixlr.com" target="_blank">Mixlr</a></div>
+<div class="link-item category-social" data-category="social"><a href="https://vimm.net" target="_blank">Vimm Community</a></div>
+<!-- 🗞️ NEWS & EDUCATIONAL WEBSITES -->
+<div class="link-item category-news" data-category="news"><a href="https://www.cnn.com" target="_blank">CNN</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.bbc.com" target="_blank">BBC</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.aljazeera.com" target="_blank">Al Jazeera</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.foxnews.com" target="_blank">Fox News</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.nbcnews.com" target="_blank">NBC News</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.reuters.com" target="_blank">Reuters</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.theguardian.com" target="_blank">The Guardian</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.nytimes.com" target="_blank">The New York Times</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.wsj.com" target="_blank">The Wall Street Journal</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.washingtonpost.com" target="_blank">The Washington Post</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.economist.com" target="_blank">The Economist</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.ft.com" target="_blank">Financial Times</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.bloomberg.com" target="_blank">Bloomberg</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.cnbc.com" target="_blank">CNBC</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.forbes.com" target="_blank">Forbes</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.businessinsider.com" target="_blank">Business Insider</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.techcrunch.com" target="_blank">TechCrunch</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.engadget.com" target="_blank">Engadget</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.theverge.com" target="_blank">The Verge</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.wired.com" target="_blank">Wired</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.apnews.com" target="_blank">Associated Press</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.nationalgeographic.com" target="_blank">National Geographic</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.huffpost.com" target="_blank">HuffPost</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.vox.com" target="_blank">Vox</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.usatoday.com" target="_blank">USA Today</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://time.com" target="_blank">TIME</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.buzzfeednews.com" target="_blank">BuzzFeed News</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://news.google.com" target="_blank">Google News</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://news.yahoo.com" target="_blank">Yahoo News</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.dw.com" target="_blank">Deutsche Welle</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.independent.co.uk" target="_blank">The Independent</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.india.com" target="_blank">India.com</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.indiatoday.in" target="_blank">India Today</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.prothomalo.com" target="_blank">Prothom Alo (BD)</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.thedailystar.net" target="_blank">The Daily Star (BD)</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.bdnews24.com" target="_blank">BDNews24</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.kalerkantho.com" target="_blank">Kaler Kantho</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.channelionline.com" target="_blank">Channel i Online</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.banglanews24.com" target="_blank">Bangla News 24</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.samakal.com" target="_blank">Samakal</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.dhakatribune.com" target="_blank">Dhaka Tribune</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.newagebd.net" target="_blank">New Age BD</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.bssnews.net" target="_blank">BSS News</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.unb.com.bd" target="_blank">UNB</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.jugantor.com" target="_blank">Jugantor</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.dailyjanakantha.com" target="_blank">Janakantha</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.amadershomoy.com" target="_blank">Amader Shomoy</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.khanacademy.org" target="_blank">Khan Academy</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.coursera.org" target="_blank">Coursera</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.udemy.com" target="_blank">Udemy</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.edx.org" target="_blank">edX</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.futurelearn.com" target="_blank">FutureLearn</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.codecademy.com" target="_blank">Codecademy</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.udacity.com" target="_blank">Udacity</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.skillshare.com" target="_blank">Skillshare</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.brilliant.org" target="_blank">Brilliant</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.wikipedia.org" target="_blank">Wikipedia</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.nature.com" target="_blank">Nature</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.scientificamerican.com" target="_blank">Scientific American</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.researchgate.net" target="_blank">ResearchGate</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.academia.edu" target="_blank">Academia.edu</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.ted.com" target="_blank">TED</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.medium.com" target="_blank">Medium</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.substack.com" target="_blank">Substack</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.livescience.com" target="_blank">Live Science</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.sciencenews.org" target="_blank">Science News</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.space.com" target="_blank">Space.com</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.nasa.gov" target="_blank">NASA</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://earthsky.org" target="_blank">EarthSky</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.weather.com" target="_blank">Weather Channel</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://climate.nasa.gov" target="_blank">NASA Climate</a></div>
+<div class="link-item category-news" data-category="news"><a href="https://www.nationalgeographic.org" target="_blank">National Geographic Society</a></div>
+<!-- 🎬 ENTERTAINMENT / STREAMING / MEDIA -->
+<div class="link-item category-ent" data-category="ent"><a href="https://www.youtube.com" target="_blank">YouTube</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.netflix.com" target="_blank">Netflix</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.spotify.com" target="_blank">Spotify</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.soundcloud.com" target="_blank">SoundCloud</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.vimeo.com" target="_blank">Vimeo</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.twitch.tv" target="_blank">Twitch</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.dailymotion.com" target="_blank">Dailymotion</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.disneyplus.com" target="_blank">Disney+</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.hulu.com" target="_blank">Hulu</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.primevideo.com" target="_blank">Amazon Prime Video</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.hotstar.com" target="_blank">Hotstar</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.zee5.com" target="_blank">ZEE5</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.sonyliv.com" target="_blank">SonyLIV</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.mxplayer.in" target="_blank">MX Player</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.paramountplus.com" target="_blank">Paramount+</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.peacocktv.com" target="_blank">Peacock TV</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.hbo.com" target="_blank">HBO</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.crunchyroll.com" target="_blank">Crunchyroll</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.funimation.com" target="_blank">Funimation</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.animepahe.ru" target="_blank">AnimePahe</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://9anime.to" target="_blank">9Anime</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.kissanime.ru" target="_blank">KissAnime</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://animixplay.to" target="_blank">AniMixPlay</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://gogoanime.news" target="_blank">GoGoAnime</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.imdb.com" target="_blank">IMDb</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://letterboxd.com" target="_blank">Letterboxd</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://trakt.tv" target="_blank">Trakt TV</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://rottentomatoes.com" target="_blank">Rotten Tomatoes</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://metacritic.com" target="_blank">Metacritic</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.boxofficemojo.com" target="_blank">Box Office Mojo</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.pandora.com" target="_blank">Pandora</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.deezer.com" target="_blank">Deezer</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.tidal.com" target="_blank">Tidal</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.audible.com" target="_blank">Audible</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.soundtrap.com" target="_blank">Soundtrap</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.mixcloud.com" target="_blank">Mixcloud</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.reverbnation.com" target="_blank">ReverbNation</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://bandcamp.com" target="_blank">Bandcamp</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.last.fm" target="_blank">Last.fm</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://genius.com" target="_blank">Genius</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://musixmatch.com" target="_blank">Musixmatch</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.shazam.com" target="_blank">Shazam</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.audionetwork.com" target="_blank">Audio Network</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.vevo.com" target="_blank">VEVO</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.tubidy.mobi" target="_blank">Tubidy</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.soundclick.com" target="_blank">SoundClick</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://open.spotify.com" target="_blank">Spotify Web Player</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://music.youtube.com" target="_blank">YouTube Music</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://tv.apple.com" target="_blank">Apple TV+</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://music.apple.com" target="_blank">Apple Music</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://tv.cbs.com" target="_blank">CBS</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.nbc.com" target="_blank">NBC</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.espn.com" target="_blank">ESPN</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.fifa.com" target="_blank">FIFA</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.nba.com" target="_blank">NBA</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.uefa.com" target="_blank">UEFA</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.formula1.com" target="_blank">Formula 1</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.wwe.com" target="_blank">WWE</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.mlb.com" target="_blank">MLB</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.nfl.com" target="_blank">NFL</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.espncricinfo.com" target="_blank">ESPN Cricinfo</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.cricbuzz.com" target="_blank">Cricbuzz</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.livescore.com" target="_blank">LiveScore</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.goal.com" target="_blank">Goal.com</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.twitchtracker.com" target="_blank">Twitch Tracker</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.animenewsnetwork.com" target="_blank">Anime News Network</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.myanimelist.net" target="_blank">MyAnimeList</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://anilist.co" target="_blank">AniList</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://kitsu.io" target="_blank">Kitsu</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.giantbomb.com" target="_blank">Giant Bomb</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.ign.com" target="_blank">IGN</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.gamespot.com" target="_blank">GameSpot</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://kotaku.com" target="_blank">Kotaku</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.eurogamer.net" target="_blank">Eurogamer</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.pcgamer.com" target="_blank">PC Gamer</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.gamesradar.com" target="_blank">GamesRadar+</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.destructoid.com" target="_blank">Destructoid</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.gameinformer.com" target="_blank">Game Informer</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://store.steampowered.com" target="_blank">Steam</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.epicgames.com/store" target="_blank">Epic Games Store</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.origin.com" target="_blank">Origin</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://store.ubisoft.com" target="_blank">Ubisoft Store</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://store.playstation.com" target="_blank">PlayStation Store</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.xbox.com/en-US/microsoft-store" target="_blank">Xbox Store</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.nintendo.com" target="_blank">Nintendo</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.gog.com" target="_blank">GOG.com</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://itch.io" target="_blank">itch.io</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://moddb.com" target="_blank">Mod DB</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.speedrun.com" target="_blank">Speedrun</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.twitch.tv/directory" target="_blank">Twitch Directory</a></div>
+<!-- 🤖 AI / TECH / TOOLS -->
+<div class="link-item category-ent" data-category="ent"><a href="https://chat.openai.com" target="_blank">ChatGPT</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.perplexity.ai" target="_blank">Perplexity AI</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.bing.com/chat" target="_blank">Copilot (Bing Chat)</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://gemini.google.com" target="_blank">Google Gemini</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://claude.ai" target="_blank">Claude AI</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://poe.com" target="_blank">Poe AI Hub</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.huggingface.co" target="_blank">Hugging Face</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://replicate.com" target="_blank">Replicate Models</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://stability.ai" target="_blank">Stability AI</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://midjourney.com" target="_blank">Midjourney</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://runwayml.com" target="_blank">Runway ML</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://leonardo.ai" target="_blank">Leonardo AI</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://ideogram.ai" target="_blank">Ideogram AI</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.canva.com/ai" target="_blank">Canva Magic Studio</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.remove.bg" target="_blank">Remove.bg</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://cleanup.pictures" target="_blank">Cleanup Pictures</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://krisp.ai" target="_blank">Krisp Noise Canceller</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://otter.ai" target="_blank">Otter.ai Transcripts</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://descript.com" target="_blank">Descript Editor</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://synthesia.io" target="_blank">Synthesia Video AI</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://pika.art" target="_blank">Pika Video Generator</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.d-id.com" target="_blank">D-ID Avatar AI</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://heygen.com" target="_blank">HeyGen Avatar Studio</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://resemble.ai" target="_blank">Resemble Voice AI</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://play.ht" target="_blank">Play.ht TTS</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://elevenlabs.io" target="_blank">ElevenLabs Voice</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://voicemaker.in" target="_blank">Voicemaker</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://copy.ai" target="_blank">Copy.ai</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://writesonic.com" target="_blank">Writesonic</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://jasper.ai" target="_blank">Jasper AI</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://anyword.com" target="_blank">Anyword</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://grammarly.com" target="_blank">Grammarly</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://quillbot.com" target="_blank">QuillBot</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://deepl.com/translator" target="_blank">DeepL Translator</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://translate.google.com" target="_blank">Google Translate</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://mymind.com" target="_blank">MyMind AI Organizer</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://notion.so" target="_blank">Notion</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.evernote.com" target="_blank">Evernote</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.notion.ai" target="_blank">Notion AI</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://trello.com" target="_blank">Trello</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://todoist.com" target="_blank">Todoist</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://asana.com" target="_blank">Asana</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://clickup.com" target="_blank">ClickUp</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://monday.com" target="_blank">Monday.com</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://airtable.com" target="_blank">Airtable</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://miro.com" target="_blank">Miro</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://figma.com" target="_blank">Figma</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.framer.com" target="_blank">Framer</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://webflow.com" target="_blank">Webflow</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://codepen.io" target="_blank">CodePen</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://jsfiddle.net" target="_blank">JSFiddle</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://replit.com" target="_blank">Replit</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://codesandbox.io" target="_blank">CodeSandbox</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://glitch.com" target="_blank">Glitch</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://stackblitz.com" target="_blank">StackBlitz</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://github.com" target="_blank">GitHub</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://gitlab.com" target="_blank">GitLab</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://bitbucket.org" target="_blank">Bitbucket</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://sourceforge.net" target="_blank">SourceForge</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://developer.mozilla.org" target="_blank">MDN Web Docs</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://dev.to" target="_blank">DEV Community</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://stackoverflow.com" target="_blank">Stack Overflow</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://stackexchange.com" target="_blank">Stack Exchange</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://learn.microsoft.com" target="_blank">Microsoft Docs</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://developer.apple.com" target="_blank">Apple Developer</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://developers.google.com" target="_blank">Google Developers</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://openai.com/research" target="_blank">OpenAI Research</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://paperswithcode.com" target="_blank">Papers with Code</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://colab.research.google.com" target="_blank">Google Colab</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://kaggle.com" target="_blank">Kaggle</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://huggingface.co/spaces" target="_blank">Hugging Face Spaces</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://arxiv.org" target="_blank">arXiv</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://colab.ai" target="_blank">Colab AI</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://deeplearning.ai" target="_blank">DeepLearning.AI</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://tensorflow.org" target="_blank">TensorFlow</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://pytorch.org" target="_blank">PyTorch</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://scikit-learn.org" target="_blank">Scikit-learn</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://keras.io" target="_blank">Keras</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://opencv.org" target="_blank">OpenCV</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.unrealengine.com" target="_blank">Unreal Engine</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://unity.com" target="_blank">Unity</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://blender.org" target="_blank">Blender</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://threejs.org" target="_blank">Three.js</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://godotengine.org" target="_blank">Godot Engine</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://visualstudio.microsoft.com" target="_blank">Visual Studio</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://code.visualstudio.com" target="_blank">VS Code</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://jetbrains.com" target="_blank">JetBrains</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://eclipse.org" target="_blank">Eclipse</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://atom.io" target="_blank">Atom Editor</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://sublimetext.com" target="_blank">Sublime Text</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://brackets.io" target="_blank">Brackets</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://notepad-plus-plus.org" target="_blank">Notepad++</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://obsidian.md" target="_blank">Obsidian</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://simplenote.com" target="_blank">Simplenote</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://marktext.app" target="_blank">MarkText</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://typora.io" target="_blank">Typora</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://getbootstrap.com" target="_blank">Bootstrap</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://tailwindcss.com" target="_blank">Tailwind CSS</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://fontawesome.com" target="_blank">Font Awesome</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://cdnjs.com" target="_blank">cdnjs</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://npmjs.com" target="_blank">npm</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://yarnpkg.com" target="_blank">Yarn</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://vitejs.dev" target="_blank">Vite</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://react.dev" target="_blank">React</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://vuejs.org" target="_blank">Vue.js</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://angular.io" target="_blank">Angular</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://svelte.dev" target="_blank">Svelte</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://nextjs.org" target="_blank">Next.js</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://nuxt.com" target="_blank">Nuxt</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://astro.build" target="_blank">Astro</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://deno.com" target="_blank">Deno</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://bun.sh" target="_blank">Bun</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://expressjs.com" target="_blank">Express.js</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://fastapi.tiangolo.com" target="_blank">FastAPI</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://flask.palletsprojects.com" target="_blank">Flask</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://django-project.com" target="_blank">Django</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://laravel.com" target="_blank">Laravel</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://rubyonrails.org" target="_blank">Ruby on Rails</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://spring.io" target="_blank">Spring Framework</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://dotnet.microsoft.com" target="_blank">.NET Framework</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://golang.org" target="_blank">Go Lang</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://rust-lang.org" target="_blank">Rust Lang</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://python.org" target="_blank">Python.org</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://cplusplus.com" target="_blank">C++ Docs</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://developer.android.com" target="_blank">Android Developers</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://developer.apple.com/xcode" target="_blank">Xcode</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://firebase.google.com" target="_blank">Firebase</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://supabase.com" target="_blank">Supabase</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://vercel.com" target="_blank">Vercel</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://netlify.com" target="_blank">Netlify</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://render.com" target="_blank">Render</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://railway.app" target="_blank">Railway</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://heroku.com" target="_blank">Heroku</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://cloudflare.com" target="_blank">Cloudflare</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://aws.amazon.com" target="_blank">AWS Console</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://azure.microsoft.com" target="_blank">Microsoft Azure</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://cloud.google.com" target="_blank">Google Cloud</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://oracle.com/cloud" target="_blank">Oracle Cloud</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://digitalocean.com" target="_blank">DigitalOcean</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://linode.com" target="_blank">Linode</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://vultr.com" target="_blank">Vultr</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://namecheap.com" target="_blank">Namecheap</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://godaddy.com" target="_blank">GoDaddy</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://cloudflarepages.com" target="_blank">Cloudflare Pages</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://github.io" target="_blank">GitHub Pages</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://ngrok.com" target="_blank">ngrok Tunnel</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://postman.com" target="_blank">Postman</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://insomnia.rest" target="_blank">Insomnia API Client</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://rapidapi.com" target="_blank">RapidAPI</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://swagger.io" target="_blank">Swagger Hub</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://jsonlint.com" target="_blank">JSON Lint</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://jwt.io" target="_blank">JWT Debugger</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://regex101.com" target="_blank">Regex 101</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://codebeautify.org" target="_blank">Code Beautify</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://jsonformatter.org" target="_blank">JSON Formatter</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://diffchecker.com" target="_blank">Diff Checker</a></div>
+<!-- 🛒 SHOPPING & BUSINESS WEBSITES -->
+<div class="link-item category-ent" data-category="ent"><a href="https://www.amazon.com" target="_blank">Amazon</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.ebay.com" target="_blank">eBay</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.alibaba.com" target="_blank">Alibaba</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.aliexpress.com" target="_blank">AliExpress</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.flipkart.com" target="_blank">Flipkart</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.daraz.com" target="_blank">Daraz</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.shopify.com" target="_blank">Shopify</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.etsy.com" target="_blank">Etsy</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.walmart.com" target="_blank">Walmart</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.target.com" target="_blank">Target</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.bestbuy.com" target="_blank">Best Buy</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.newegg.com" target="_blank">Newegg</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.overstock.com" target="_blank">Overstock</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.costco.com" target="_blank">Costco</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.macys.com" target="_blank">Macy’s</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.nordstrom.com" target="_blank">Nordstrom</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.sears.com" target="_blank">Sears</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.kohls.com" target="_blank">Kohl’s</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.jcpenney.com" target="_blank">JCPenney</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.shein.com" target="_blank">SHEIN</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.zara.com" target="_blank">ZARA</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.hm.com" target="_blank">H&M</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.uniqlo.com" target="_blank">Uniqlo</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.forever21.com" target="_blank">Forever 21</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.gap.com" target="_blank">GAP</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.asos.com" target="_blank">ASOS</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.boohoo.com" target="_blank">Boohoo</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.fashionnova.com" target="_blank">Fashion Nova</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.nike.com" target="_blank">Nike</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.adidas.com" target="_blank">Adidas</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.puma.com" target="_blank">Puma</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.reebok.com" target="_blank">Reebok</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.vans.com" target="_blank">Vans</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.footlocker.com" target="_blank">Foot Locker</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.newbalance.com" target="_blank">New Balance</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.converse.com" target="_blank">Converse</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.underarmour.com" target="_blank">Under Armour</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.decathlon.com" target="_blank">Decathlon</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.lazada.com" target="_blank">Lazada</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.tokopedia.com" target="_blank">Tokopedia</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.jd.com" target="_blank">JD.com</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.rakuten.com" target="_blank">Rakuten</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.carrefour.com" target="_blank">Carrefour</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.tesco.com" target="_blank">Tesco</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.auchan.com" target="_blank">Auchan</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.metro.com" target="_blank">Metro</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.aldi.com" target="_blank">ALDI</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.lidl.com" target="_blank">LIDL</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.wayfair.com" target="_blank">Wayfair</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.ikea.com" target="_blank">IKEA</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.homedepot.com" target="_blank">Home Depot</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.lowes.com" target="_blank">Lowe’s</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.wayfair.co.uk" target="_blank">Wayfair UK</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.overstock.ca" target="_blank">Overstock Canada</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.bhphotovideo.com" target="_blank">B&H Photo Video</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.microcenter.com" target="_blank">Micro Center</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.apple.com/store" target="_blank">Apple Store</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.samsung.com" target="_blank">Samsung</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.mi.com" target="_blank">Xiaomi Store</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.oppo.com" target="_blank">Oppo Store</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.realme.com" target="_blank">Realme</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.oneplus.com" target="_blank">OnePlus</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://store.google.com" target="_blank">Google Store</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://store.microsoft.com" target="_blank">Microsoft Store</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://store.sony.com" target="_blank">Sony Store</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://store.hp.com" target="_blank">HP Store</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://store.dell.com" target="_blank">Dell Store</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.lenovo.com" target="_blank">Lenovo Store</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.asus.com" target="_blank">ASUS Store</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.acer.com" target="_blank">Acer Store</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.razer.com" target="_blank">Razer Store</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://store.steampowered.com" target="_blank">Steam Store</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://store.epicgames.com" target="_blank">Epic Games Store</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://store.nintendo.com" target="_blank">Nintendo Store</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://store.xbox.com" target="_blank">Xbox Store</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://store.playstation.com" target="_blank">PlayStation Store</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.g2a.com" target="_blank">G2A Marketplace</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.greenmangaming.com" target="_blank">Green Man Gaming</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.humblebundle.com" target="_blank">Humble Bundle</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.origin.com" target="_blank">Origin Store</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.gog.com" target="_blank">GOG Store</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.cdkeys.com" target="_blank">CDKeys</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.fanatical.com" target="_blank">Fanatical</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.keymailer.co" target="_blank">Keymailer</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.stockx.com" target="_blank">StockX</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.goat.com" target="_blank">GOAT Sneakers</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.flightclub.com" target="_blank">Flight Club</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.farfetch.com" target="_blank">Farfetch</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.net-a-porter.com" target="_blank">Net-a-Porter</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.mrporter.com" target="_blank">Mr Porter</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.luisaviaroma.com" target="_blank">LuisaViaRoma</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.matchesfashion.com" target="_blank">Matches Fashion</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.ssense.com" target="_blank">SSENSE</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.endclothing.com" target="_blank">END Clothing</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.grailed.com" target="_blank">Grailed</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.thredup.com" target="_blank">thredUP</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.poshmark.com" target="_blank">Poshmark</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.depop.com" target="_blank">Depop</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.vinted.com" target="_blank">Vinted</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.rebag.com" target="_blank">Rebag</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.realreal.com" target="_blank">The Real Real</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.kickscrew.com" target="_blank">KicksCrew</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.urbanoutfitters.com" target="_blank">Urban Outfitters</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.anthropologie.com" target="_blank">Anthropologie</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.freepeople.com" target="_blank">Free People</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.lululemon.com" target="_blank">Lululemon</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.patagonia.com" target="_blank">Patagonia</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.columbia.com" target="_blank">Columbia Sportswear</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.thenorthface.com" target="_blank">The North Face</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.reebok.com" target="_blank">Reebok Store</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.decathlon.com" target="_blank">Decathlon Online</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.gymshark.com" target="_blank">Gymshark</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.bodybuilding.com" target="_blank">Bodybuilding Store</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.vitacost.com" target="_blank">Vitacost</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.iherb.com" target="_blank">iHerb</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.sephora.com" target="_blank">Sephora</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.ulta.com" target="_blank">Ulta Beauty</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.nyxcosmetics.com" target="_blank">NYX Cosmetics</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.maccosmetics.com" target="_blank">MAC Cosmetics</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.maybelline.com" target="_blank">Maybelline</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.loreal.com" target="_blank">L’Oréal</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.clinique.com" target="_blank">Clinique</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.esteelauder.com" target="_blank">Estée Lauder</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.avon.com" target="_blank">Avon</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.oriflame.com" target="_blank">Oriflame</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.bathandbodyworks.com" target="_blank">Bath & Body Works</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.bodyshop.com" target="_blank">The Body Shop</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.swarovski.com" target="_blank">Swarovski</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.tiffany.com" target="_blank">Tiffany & Co.</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.cartier.com" target="_blank">Cartier</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.rolex.com" target="_blank">Rolex</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.omegawatches.com" target="_blank">Omega Watches</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.swatch.com" target="_blank">Swatch</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.tagheuer.com" target="_blank">TAG Heuer</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.longines.com" target="_blank">Longines</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.gucci.com" target="_blank">Gucci</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.louisvuitton.com" target="_blank">Louis Vuitton</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.chanel.com" target="_blank">Chanel</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.dior.com" target="_blank">Dior</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.prada.com" target="_blank">Prada</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.balenciaga.com" target="_blank">Balenciaga</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.fendi.com" target="_blank">Fendi</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.hermes.com" target="_blank">Hermès</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.burberry.com" target="_blank">Burberry</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.versace.com" target="_blank">Versace</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.armani.com" target="_blank">Armani</a></div>
+<div class="link-item category-ent" data-category="ent"><a href="https://www.valentino.com" target="_blank">Valentino</a></div>
+
+      
+      <!-- Adult Websites -->
+      <div class="link-item category-adult" data-category="adult">
+        <a href="https://www.pornhub.com" target="_blank">Pornhub</a>
+      </div>
+      <div class="link-item category-adult" data-category="adult">
+        <a href="https://www.xhamster.com" target="_blank">XHamster</a>
+      </div>
+      <div class="link-item category-adult" data-category="adult">
+        <a href="https://www.xvideos.com" target="_blank">XVideos</a>
+      </div>
+      <div class="link-item category-adult" data-category="adult">
+        <a href="https://www.xnxx.com" target="_blank">XNXX</a>
+      </div>
+      <div class="link-item category-adult" data-category="adult">
+        <a href="https://www.puretaboo.com" target="_blank">PureTaboo</a>
+      </div>
+      <div class="link-item category-adult" data-category="adult">
+        <a href="https://www.bangbros.com" target="_blank">BangBros</a>
+      </div>
+      <div class="link-item category-adult" data-category="adult">
+        <a href="https://www.woodmancastingx.com" target="_blank">Woodman Casting</a>
+      </div>
+      <div class="link-item category-adult" data-category="adult">
+        <a href="https://www.brazzers.com" target="_blank">Brazzers</a>
+      </div>
+      <div class="link-item category-adult" data-category="adult">
+      	<a href="https://www.hentaicity.com" target="_blank">HentaiCity</a>
+      </div>
+    </div>
+  </div>
+
+<script>
+// =========================
+// ⚙️ Confirmation Popup + Spinner Loader
+// =========================
+
+// Create reusable elements (popup + overlay + bar)
+document.body.insertAdjacentHTML("beforeend", `
+  <div class="confirm-overlay" id="confirmOverlay">
+    <div class="confirm-box">
+      <h3>Leave this site?</h3>
+      <p id="confirmMessage">You’re about to visit an external link.</p>
+      <div class="confirm-buttons">
+        <button class="yes">Yes</button>
+        <button class="no">Cancel</button>
+      </div>
+    </div>
+  </div>
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+  </div>
+  <div class="loading-bar" id="loadingBar"></div>
+`);
+
+// Cache elements
+const confirmOverlay = document.getElementById("confirmOverlay");
+const loadingOverlay = document.getElementById("loadingOverlay");
+const loadingBar = document.getElementById("loadingBar");
+const confirmMessage = document.getElementById("confirmMessage");
+
+// Attach confirmation popup to all links
+document.addEventListener("click", e => {
+  const link = e.target.closest(".link-item a");
+  if (!link) return;
+  e.preventDefault(); // stop default click
+  showConfirm(link.href);
+});
+
+function showConfirm(url) {
+  confirmMessage.textContent = `Open this site?\n${url}`;
+  confirmOverlay.classList.add("active");
+
+  const yesBtn = confirmOverlay.querySelector(".yes");
+  const noBtn = confirmOverlay.querySelector(".no");
+
+  // Cleanup old listeners before adding new
+  yesBtn.onclick = null;
+  noBtn.onclick = null;
+
+  yesBtn.onclick = () => {
+    confirmOverlay.classList.remove("active");
+    startLoadingAnimation(url);
+  };
+  noBtn.onclick = () => confirmOverlay.classList.remove("active");
+}
+
+function startLoadingAnimation(url) {
+  loadingOverlay.classList.add("active");
+  loadingBar.classList.add("active");
+  loadingBar.style.width = "0%";
+
+  let progress = 0;
+  const interval = setInterval(() => {
+    progress += Math.floor(Math.random() * 12) + 8;
+    if (progress > 100) progress = 100;
+    loadingBar.style.width = progress + "%";
+
+    if (progress >= 100) {
+      clearInterval(interval);
+      setTimeout(() => {
+        loadingOverlay.classList.remove("active");
+        loadingBar.classList.remove("active");
+        loadingBar.style.width = "0%";
+        window.open(url, "_blank");
+      }, 300);
+    }
+  }, 200);
+}
+
+// =========================
+// 🔍 Search Function
+// =========================
+function searchLinks() {
+  const val = document.getElementById("searchInput").value.toLowerCase();
+  document.querySelectorAll(".link-item").forEach(el => {
+    const text = el.textContent.toLowerCase();
+    el.style.display = text.includes(val) ? "block" : "none";
+  });
+}
+
+// =========================
+// 🧭 Category Filter
+// =========================
+function filterLinks(category) {
+  document.querySelectorAll(".link-item").forEach(el => {
+    const cat = el.dataset.category;
+    el.style.display = (category === "all" || cat === category)
+      ? "block"
+      : "none";
+  });
+}
+
+// =========================
+// 🦆 DuckDuckGo Search
+// =========================
+function openDuckDuckGoSearch() {
+  const query = document.getElementById("searchInput").value.trim();
+  if (query) {
+    window.open("https://duckduckgo.com/?q=" + encodeURIComponent(query), "_blank");
+  }
+}
+// Disable right-click
+document.addEventListener('contextmenu', event => event.preventDefault());
+
+// Disable F12 and Inspect Element shortcuts
+document.addEventListener('keydown', event => {
+  if (event.key === "F12" || (event.ctrlKey && event.shiftKey && event.key === "I")) {
+    event.preventDefault();
+  }
+});
+
+// Disable text selection
+document.addEventListener('selectstart', event => event.preventDefault());
+
+// =========================
+// 🎲 Random Button
+// =========================
+function openRandomWebApp() {
+  const links = Array.from(document.querySelectorAll(".link-item a"));
+  if (!links.length) return;
+  const random = links[Math.floor(Math.random() * links.length)];
+  if (random) showConfirm(random.href);
+}
+</script>
+</body>
+</html>
